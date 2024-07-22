@@ -11,3 +11,9 @@ Este servicio gestiona los carritos de compra de los usuarios.
 - `DELETE /carts/{id}/items/{item_id}` - Eliminar un item del carrito
 - `GET /carts/{id}/total` - Calcular el total del carrito
 - `POST /carts/{id}/apply-coupon` - Aplicar un cupón al carrito
+
+### Atributos principales:
+
+- Carrito: `id`, `usuario_id`, `items[]`, `total`, `cupón_aplicado`
+- Item del carrito: `id`, `producto_id`, `cantidad`, `precio_unitario`
+- Cupón: `código`, `descuento`, `tipo_descuento` (porcentaje o monto fijo)
