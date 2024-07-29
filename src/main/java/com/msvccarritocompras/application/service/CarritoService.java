@@ -6,15 +6,16 @@ import com.msvccarritocompras.application.repository.CarritoRepository;
 import com.msvccarritocompras.domain.entity.Carrito;
 import com.msvccarritocompras.domain.entity.Cupon;
 import com.msvccarritocompras.domain.entity.ItemCarrito;
+import com.msvccarritocompras.domain.exceptions.CarritoNotFoundException;
 import com.msvccarritocompras.infrastructure.api.producto.client.ProductoFeingClient;
 import com.msvccarritocompras.infrastructure.api.producto.dto.ProductoDto;
 import com.msvccarritocompras.infrastructure.persistence.CarritoPersistence;
 import com.msvccarritocompras.infrastructure.persistence.CuponPersistence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,7 +87,26 @@ public class CarritoService implements CarritoRepository {
 
     @Override
     public CarritoResponse getCarrito(Long carritoId) {
-        return null;
+        Carrito carritoBd = carritoPersistence.findById(carritoId)
+                .orElseThrow(()-> new CarritoNotFoundException("carrito con el id:"+carritoId+" no encontrado"));
+
+        List<CarritoResponse.ItemCarritoResponse> itemCarritoResponseList= carritoBd.getItemCarritoList().stream().map(itemCarrito -> {
+                    ProductoDto productoDto = productoFeingClient.getProductById(itemCarrito.getProductoId());
+
+                   return new CarritoResponse.ItemCarritoResponse(
+                    itemCarrito.getItemCarritoId(),
+                    itemCarrito.getCantidad(),
+                    itemCarrito.getPrecioUnitarioItem(),
+                            productoDto );
+        }).toList();
+
+        return new CarritoResponse(
+                carritoBd.getCarritoId(),
+                carritoBd.getUsuarioId(),
+                carritoBd.getTotal(),
+                carritoBd.getCupon().getCodigo(),
+                itemCarritoResponseList
+        );
     }
 
     @Override
