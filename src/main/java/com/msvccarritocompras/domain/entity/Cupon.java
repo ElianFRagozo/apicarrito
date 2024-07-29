@@ -3,10 +3,16 @@ package com.msvccarritocompras.domain.entity;
 
 import com.msvccarritocompras.domain.enums.TipoDescuento;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "cupones")
 public class Cupon {
 

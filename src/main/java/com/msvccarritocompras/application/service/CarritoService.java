@@ -6,7 +6,9 @@ import com.msvccarritocompras.application.repository.CarritoRepository;
 import com.msvccarritocompras.domain.entity.Carrito;
 import com.msvccarritocompras.domain.entity.Cupon;
 import com.msvccarritocompras.domain.entity.ItemCarrito;
+import com.msvccarritocompras.domain.enums.TipoDescuento;
 import com.msvccarritocompras.domain.exceptions.CarritoNotFoundException;
+import com.msvccarritocompras.domain.exceptions.CuponNotFoundException;
 import com.msvccarritocompras.infrastructure.api.producto.client.ProductoFeingClient;
 import com.msvccarritocompras.infrastructure.api.producto.dto.ProductoDto;
 import com.msvccarritocompras.infrastructure.persistence.CarritoPersistence;
@@ -15,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +31,10 @@ public class CarritoService implements CarritoRepository {
 
     @Override
     public CarritoResponse crearCarrito(CarritoRequest carritoRequest) {
+        BigDecimal totalConDescuento;
         String codigoCupon = carritoRequest.codigoCupon() != null ? carritoRequest.codigoCupon() : "no-cupon";
-        Cupon cuponEncontrado = cuponPersistence.findCuponByCodigo(codigoCupon);
+        Cupon cuponEncontrado = cuponPersistence.findCuponByCodigo(codigoCupon)
+                .orElseThrow(()-> new CuponNotFoundException("cupon con cupon :"+codigoCupon+" no encontrado"));
 
         List<ItemCarrito> itemCarritoList = carritoRequest.itemcarritoList().stream()
                 .map(itemCarritoRequest -> {
@@ -46,13 +49,20 @@ public class CarritoService implements CarritoRepository {
                 })
                 .collect(Collectors.toList());
 
-        BigDecimal descuento = BigDecimal.valueOf(cuponEncontrado.getCantidad() / 100.0);
         BigDecimal totalCarrito = itemCarritoList.stream()
                 .map(itemCarrito -> BigDecimal.valueOf(itemCarrito.getPrecioUnitarioItem()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal totalConDescuento = totalCarrito.multiply(BigDecimal.ONE.subtract(descuento))
-                .setScale(2, RoundingMode.HALF_UP);
+       if (cuponEncontrado.getTipoDescuento()== TipoDescuento.PORCENTAJE){
+           BigDecimal descuento = BigDecimal.valueOf(cuponEncontrado.getCantidad() / 100.0);
+            totalConDescuento = totalCarrito.multiply(BigDecimal.ONE.subtract(descuento))
+                   .setScale(2, RoundingMode.HALF_UP);
+       }
+       else {
+           BigDecimal descuento = BigDecimal.valueOf(cuponEncontrado.getCantidad()).setScale(2, RoundingMode.HALF_UP);
+           totalConDescuento = totalCarrito.subtract(descuento).setScale(2, RoundingMode.HALF_UP);
+       }
+
 
         Carrito carrito = Carrito.builder()
                 .usuarioId(carritoRequest.usuarioId())

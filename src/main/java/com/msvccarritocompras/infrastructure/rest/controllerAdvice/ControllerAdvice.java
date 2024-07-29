@@ -1,7 +1,8 @@
 package com.msvccarritocompras.infrastructure.rest.controllerAdvice;
 
-import com.msvccarritocompras.domain.exceptions.CarritoNotFoundException;
+import com.msvccarritocompras.domain.exceptions.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,12 +40,32 @@ public class ControllerAdvice {
     }
     @ExceptionHandler(CarritoNotFoundException.class)
     public ResponseEntity<?> carritoNoEncontrado(CarritoNotFoundException ex){
-        Map<String,Object> error=new HashMap<>();
-        error.put("error", HttpStatus.NOT_FOUND);
-        error.put("codigo",HttpStatus.NOT_FOUND.value());
-        error.put("mensaje",ex.getMessage());
+        return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.NOT_FOUND,HttpStatus.NOT_FOUND.value()),HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(CuponNotFoundException.class)
+    public ResponseEntity<?> cuponNoEncontrado(CuponNotFoundException ex){
+        return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.NOT_FOUND,HttpStatus.NOT_FOUND.value()),HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(InvalidTipoDescuentoException.class)
+    public ResponseEntity<?> invalidoTipoDescuento(InvalidTipoDescuentoException ex){
+        return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.BAD_REQUEST,HttpStatus.BAD_REQUEST.value()),HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CuponCodigoExistenteException.class)
+    public ResponseEntity<?> cuponCodigoExistente(CuponCodigoExistenteException ex){
+        return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.BAD_REQUEST,HttpStatus.BAD_REQUEST.value()),HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidCantidadException.class)
+    public ResponseEntity<?> invalidoMontoDescuento(InvalidCantidadException ex){
+        return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.BAD_REQUEST,HttpStatus.BAD_REQUEST.value()),HttpStatus.BAD_REQUEST);
+    }
 
-        return  new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+
+    public static Map<String,Object>  mapResponse(String message, HttpStatusCode httpStatusCode,Integer codigoStatus){
+        Map<String,Object> error=new HashMap<>();
+        error.put("error", httpStatusCode);
+        error.put("codigo",codigoStatus);
+        error.put("mensaje",message);
+        return error;
     }
 
 }
