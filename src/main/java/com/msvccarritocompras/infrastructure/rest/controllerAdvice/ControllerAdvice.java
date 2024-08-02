@@ -58,6 +58,10 @@ public class ControllerAdvice {
     public ResponseEntity<?> invalidoMontoDescuento(InvalidCantidadException ex){
         return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.BAD_REQUEST,HttpStatus.BAD_REQUEST.value()),HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(CuponExpiredException.class)
+    public ResponseEntity<?> cuponExpirado(CuponExpiredException ex){
+        return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.BAD_REQUEST,HttpStatus.BAD_REQUEST.value()),HttpStatus.BAD_REQUEST);
+    }
 
 
     public static Map<String,Object>  mapResponse(String message, HttpStatusCode httpStatusCode,Integer codigoStatus){

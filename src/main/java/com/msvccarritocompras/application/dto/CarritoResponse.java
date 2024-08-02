@@ -1,12 +1,13 @@
 package com.msvccarritocompras.application.dto;
 
 import com.msvccarritocompras.infrastructure.api.producto.dto.ProductoDto;
+import com.msvccarritocompras.infrastructure.api.usuarios.dto.UsuarioDto;
 
 import java.util.List;
 
 public record CarritoResponse(
         Long carritoId,
-        Long usuarioId,
+        UsuarioDto usuarioDto,
         Float total,
         String codigoCupon,
         List<CarritoResponse.ItemCarritoResponse> itemCarritoList

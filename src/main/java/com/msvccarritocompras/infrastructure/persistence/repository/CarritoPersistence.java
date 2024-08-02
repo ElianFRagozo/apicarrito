@@ -1,4 +1,4 @@
-package com.msvccarritocompras.infrastructure.persistence;
+package com.msvccarritocompras.infrastructure.persistence.repository;
 
 import com.msvccarritocompras.domain.entity.Carrito;
 import org.springframework.data.jpa.repository.JpaRepository;

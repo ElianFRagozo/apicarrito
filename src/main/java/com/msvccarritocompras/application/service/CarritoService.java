@@ -8,15 +8,20 @@ import com.msvccarritocompras.domain.entity.Cupon;
 import com.msvccarritocompras.domain.entity.ItemCarrito;
 import com.msvccarritocompras.domain.enums.TipoDescuento;
 import com.msvccarritocompras.domain.exceptions.CarritoNotFoundException;
+import com.msvccarritocompras.domain.exceptions.CuponExpiredException;
 import com.msvccarritocompras.domain.exceptions.CuponNotFoundException;
 import com.msvccarritocompras.infrastructure.api.producto.client.ProductoFeingClient;
 import com.msvccarritocompras.infrastructure.api.producto.dto.ProductoDto;
-import com.msvccarritocompras.infrastructure.persistence.CarritoPersistence;
-import com.msvccarritocompras.infrastructure.persistence.CuponPersistence;
+import com.msvccarritocompras.infrastructure.api.usuarios.client.UsuarioFeingClient;
+import com.msvccarritocompras.infrastructure.api.usuarios.dto.UsuarioDto;
+import com.msvccarritocompras.infrastructure.persistence.repository.CarritoPersistence;
+import com.msvccarritocompras.infrastructure.persistence.repository.CuponPersistence;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +32,7 @@ public class CarritoService implements CarritoRepository {
     private final CarritoPersistence carritoPersistence;
     private final ProductoFeingClient productoFeingClient;
     private final CuponPersistence cuponPersistence;
+    private final UsuarioFeingClient usuarioFeingClient;
 
 
     @Override
@@ -35,6 +41,9 @@ public class CarritoService implements CarritoRepository {
         String codigoCupon = carritoRequest.codigoCupon() != null ? carritoRequest.codigoCupon() : "no-cupon";
         Cupon cuponEncontrado = cuponPersistence.findCuponByCodigo(codigoCupon)
                 .orElseThrow(()-> new CuponNotFoundException("cupon con cupon :"+codigoCupon+" no encontrado"));
+        if (cuponEncontrado.getFechaExpiracion() != null && cuponEncontrado.getFechaExpiracion().isBefore(LocalDateTime.now())) {
+            throw new CuponExpiredException("El cupón con código: " + codigoCupon + " ha expirado");
+        }
 
         List<ItemCarrito> itemCarritoList = carritoRequest.itemcarritoList().stream()
                 .map(itemCarritoRequest -> {
@@ -85,10 +94,10 @@ public class CarritoService implements CarritoRepository {
                     );
                 })
                 .collect(Collectors.toList());
-
+        UsuarioDto usuarioDto= usuarioFeingClient.getAllUsuarioById(carritoRequest.usuarioId());
         return new CarritoResponse(
                 carritoGuardado.getCarritoId(),
-                carritoGuardado.getUsuarioId(),
+                usuarioDto,
                 carritoGuardado.getTotal(),
                 carritoGuardado.getCupon().getCodigo(),
                 itemCarritoResponseList
@@ -96,6 +105,7 @@ public class CarritoService implements CarritoRepository {
     }
 
     @Override
+    @Transactional
     public CarritoResponse getCarrito(Long carritoId) {
         Carrito carritoBd = carritoPersistence.findById(carritoId)
                 .orElseThrow(()-> new CarritoNotFoundException("carrito con el id:"+carritoId+" no encontrado"));
@@ -109,10 +119,11 @@ public class CarritoService implements CarritoRepository {
                     itemCarrito.getPrecioUnitarioItem(),
                             productoDto );
         }).toList();
+        UsuarioDto usuarioDto= usuarioFeingClient.getAllUsuarioById(carritoBd.getUsuarioId());
 
         return new CarritoResponse(
                 carritoBd.getCarritoId(),
-                carritoBd.getUsuarioId(),
+                usuarioDto,
                 carritoBd.getTotal(),
                 carritoBd.getCupon().getCodigo(),
                 itemCarritoResponseList

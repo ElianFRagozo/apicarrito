@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 
-@FeignClient(name = "api-producto", url = "https://fakestoreapi.com/products",fallback = FallbackProductFeing.class)
+@FeignClient(name = "api-producto", url = "${url.client.api.productos}",fallback = FallbackProductFeing.class)
 public interface ProductoFeingClient {
     @GetMapping("/{productoId}")
     ProductoDto getProductById(@PathVariable Long productoId);

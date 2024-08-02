@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Builder
@@ -25,5 +28,12 @@ public class Cupon {
     @Enumerated(EnumType.STRING)
     private TipoDescuento tipoDescuento;
     private Float cantidad;
+    private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaExpiracion;
+    private Boolean isExpired;
 
+    @PrePersist
+    void utils(){
+        fechaCreacion=LocalDateTime.now();
+    }
 }

@@ -9,10 +9,14 @@ import com.msvccarritocompras.domain.exceptions.CuponCodigoExistenteException;
 import com.msvccarritocompras.domain.exceptions.CuponNotFoundException;
 import com.msvccarritocompras.domain.exceptions.InvalidCantidadException;
 import com.msvccarritocompras.domain.exceptions.InvalidTipoDescuentoException;
-import com.msvccarritocompras.infrastructure.persistence.CuponPersistence;
+import com.msvccarritocompras.infrastructure.persistence.repository.CuponPersistence;
+import com.msvccarritocompras.infrastructure.persistence.specification.SpeceficationCupon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -25,8 +29,11 @@ public class CuponService implements CuponRepository {
 
 
     @Override
-    public List<Cupon> cuponList() {
-        return cuponPersistence.findAll();
+    public List<Cupon> cuponList(String codigo, LocalDate fecha, String expirado) {
+        boolean isExpired=Boolean.parseBoolean(expirado);
+        SpeceficationCupon speceficationCupon=new SpeceficationCupon(codigo,fecha,isExpired);
+
+        return cuponPersistence.findAll(speceficationCupon);
     }
 
     @Override
@@ -62,12 +69,17 @@ public class CuponService implements CuponRepository {
                 throw new InvalidCantidadException("La cantidad para un tipo de descuento MONTOFIJO debe ser mayor que 0");
             }
         }
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime fechaExpiracion=LocalDateTime.parse(cuponRequest.fechaExpiracion(),formatoFecha);
+        boolean Expired= fechaExpiracion.isBefore(LocalDateTime.now());
 
         Cupon cupon = Cupon.builder()
                 .tipoDescuento(tipoDescuento)
                 .cantidad(cuponRequest.cantidad())
                 .descripcion(cuponRequest.descripcion())
                 .codigo(cuponRequest.codigo())
+                .fechaExpiracion(fechaExpiracion)
+                .isExpired(Expired)
                 .build();
 
         return cuponPersistence.save(cupon);
@@ -98,17 +110,20 @@ public class CuponService implements CuponRepository {
         }
 
         TipoDescuento tipoDescuento;
-        try {
-            tipoDescuento = TipoDescuento.valueOf(cuponEditRequest.tipoDescuento().toUpperCase());
-            if (tipoDescuento != TipoDescuento.MONTOFIJO && tipoDescuento != TipoDescuento.PORCENTAJE) {
-                throw new InvalidTipoDescuentoException("El tipo de descuento debe ser MONTOFIJO o PORCENTAJE");
-            }
-        } catch (IllegalArgumentException e) {
-            throw new InvalidTipoDescuentoException("El tipo de descuento debe ser MONTOFIJO o PORCENTAJE");
-        }
-        cuponBd.setTipoDescuento(tipoDescuento);
+       if (cuponEditRequest.tipoDescuento()!=null){
+           try {
+               tipoDescuento = TipoDescuento.valueOf(cuponEditRequest.tipoDescuento().toUpperCase());
+               if (tipoDescuento != TipoDescuento.MONTOFIJO && tipoDescuento != TipoDescuento.PORCENTAJE) {
+                   throw new InvalidTipoDescuentoException("El tipo de descuento debe ser MONTOFIJO o PORCENTAJE");
+               }
+           } catch (IllegalArgumentException e) {
+               throw new InvalidTipoDescuentoException("El tipo de descuento debe ser MONTOFIJO o PORCENTAJE");
+           }
+           cuponBd.setTipoDescuento(tipoDescuento);
+       }
 
         if (cuponEditRequest.cantidad() != null) {
+            tipoDescuento=cuponBd.getTipoDescuento();
             if (tipoDescuento == TipoDescuento.PORCENTAJE) {
                 if (cuponEditRequest.cantidad() < 1 || cuponEditRequest.cantidad() > 100) {
                     throw new InvalidCantidadException("La cantidad para un tipo de descuento PORCENTAJE debe ser entre 1 y 100");
@@ -121,11 +136,22 @@ public class CuponService implements CuponRepository {
             cuponBd.setCantidad(cuponEditRequest.cantidad());
         }
 
+        if (cuponEditRequest.fechaExpiracion()!=null){
+            DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime fechaExpiracion=LocalDateTime.parse(cuponEditRequest.fechaExpiracion(),formatoFecha);
+            cuponBd.setFechaExpiracion(fechaExpiracion);
+
+            boolean Expired= fechaExpiracion.isBefore(LocalDateTime.now());
+            cuponBd.setIsExpired(Expired);
+        }
         return cuponPersistence.save(cuponBd);
     }
 
     @Override
     public void deleteCupon(Long cuponId) {
-
+        Cupon cuponBd = cuponPersistence.findById(cuponId)
+                .orElseThrow(() -> new CuponNotFoundException("Cupón con el Id: " + cuponId + " no encontrado"));
+        cuponPersistence.deleteById(cuponBd.getCuponId());
     }
+
 }

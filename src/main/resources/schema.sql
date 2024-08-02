@@ -3,7 +3,10 @@ CREATE TABLE IF NOT EXISTS cupones (
                                         descripcion VARCHAR(255),
                                         codigo VARCHAR(255) UNIQUE,
                                         tipo_descuento VARCHAR(50),
-                                        cantidad NUMERIC
+                                        cantidad NUMERIC,
+                                        fecha_creacion TIMESTAMP(0),
+                                        fecha_expiracion TIMESTAMP(0),
+                                        is_expired boolean
     );
 
 CREATE TABLE IF NOT EXISTS carritos (
