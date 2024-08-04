@@ -12,12 +12,13 @@ import com.msvccarritocompras.domain.exceptions.InvalidTipoDescuentoException;
 import com.msvccarritocompras.infrastructure.persistence.repository.CuponPersistence;
 import com.msvccarritocompras.infrastructure.persistence.specification.SpeceficationCupon;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 
 
@@ -29,11 +30,16 @@ public class CuponService implements CuponRepository {
 
 
     @Override
-    public List<Cupon> cuponList(String codigo, LocalDate fecha, String expirado) {
+    public Page<Cupon> cuponList(String codigo, LocalDate fecha, String expirado, Pageable pageable) {
+        if (codigo!=null){
+            String codigoUpper=codigo.toUpperCase();
+            cuponPersistence.findCuponByCodigo(codigoUpper)
+                    .orElseThrow(()-> new CuponNotFoundException("cupon con el codigo "+codigoUpper+" no encontrado"));
+        }
         boolean isExpired=Boolean.parseBoolean(expirado);
         SpeceficationCupon speceficationCupon=new SpeceficationCupon(codigo,fecha,isExpired);
 
-        return cuponPersistence.findAll(speceficationCupon);
+        return cuponPersistence.findAll(speceficationCupon,pageable);
     }
 
     @Override

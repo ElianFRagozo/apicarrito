@@ -1,6 +1,8 @@
 package com.msvccarritocompras.infrastructure.rest.controllerAdvice;
 
 import com.msvccarritocompras.domain.exceptions.*;
+import com.msvccarritocompras.infrastructure.api.producto.exceptions.ProductNotFoundException;
+import com.msvccarritocompras.infrastructure.api.usuarios.exceptions.UsuarioNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +63,14 @@ public class ControllerAdvice {
     @ExceptionHandler(CuponExpiredException.class)
     public ResponseEntity<?> cuponExpirado(CuponExpiredException ex){
         return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.BAD_REQUEST,HttpStatus.BAD_REQUEST.value()),HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(UsuarioNotFoundException.class)
+    public ResponseEntity<?> usuarioNoEncontrado(UsuarioNotFoundException ex){
+        return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.NOT_FOUND,HttpStatus.NOT_FOUND.value()),HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<?> productoNoEncontrado(ProductNotFoundException ex){
+        return  new ResponseEntity<>(mapResponse(ex.getMessage(),HttpStatus.NOT_FOUND,HttpStatus.NOT_FOUND.value()),HttpStatus.NOT_FOUND);
     }
 
 

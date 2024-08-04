@@ -12,13 +12,17 @@ import com.msvccarritocompras.domain.exceptions.CuponExpiredException;
 import com.msvccarritocompras.domain.exceptions.CuponNotFoundException;
 import com.msvccarritocompras.infrastructure.api.producto.client.ProductoFeingClient;
 import com.msvccarritocompras.infrastructure.api.producto.dto.ProductoDto;
+import com.msvccarritocompras.infrastructure.api.producto.exceptions.ProductNotFoundException;
 import com.msvccarritocompras.infrastructure.api.usuarios.client.UsuarioFeingClient;
 import com.msvccarritocompras.infrastructure.api.usuarios.dto.UsuarioDto;
 import com.msvccarritocompras.infrastructure.persistence.repository.CarritoPersistence;
 import com.msvccarritocompras.infrastructure.persistence.repository.CuponPersistence;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -48,6 +52,7 @@ public class CarritoService implements CarritoRepository {
         List<ItemCarrito> itemCarritoList = carritoRequest.itemcarritoList().stream()
                 .map(itemCarritoRequest -> {
                     ProductoDto productoDto = productoFeingClient.getProductById(itemCarritoRequest.productoId());
+                    if (productoDto==null){ throw new ProductNotFoundException(itemCarritoRequest.productoId());}
                     BigDecimal precioUnitarioItem = BigDecimal.valueOf(productoDto.getPrice() * itemCarritoRequest.cantidad())
                             .setScale(2, RoundingMode.HALF_UP);
                     return ItemCarrito.builder()
@@ -138,5 +143,13 @@ public class CarritoService implements CarritoRepository {
     @Override
     public void deleteCarrito(Long carritoId) {
 
+    }
+    @Override
+    public Page<Carrito> listCarritoPaginado(Long usuarioId, Pageable pageable) {
+        if (usuarioId!=null){
+                 usuarioFeingClient.getAllUsuarioById(usuarioId);
+            return carritoPersistence.findAllByUsuarioId(usuarioId,pageable);
+        }
+        return carritoPersistence.findAll(pageable);
     }
 }
