@@ -1,0 +1,34 @@
+services:
+  api-carrito:
+    container_name: "carritoContainer"
+    build: .
+    restart: always
+    ports:
+      - "8085:8085"
+    depends_on:
+      - bd-postgresql
+    networks:
+      - red_tienda
+    volumes:
+      - volumenApiCarrito:/var/lib/apiCarrito
+
+  bd-postgresql:
+    container_name: postgresContainer
+    image: postgres:16.2-alpine3.19
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bd_msvc_carrito
+    volumes:
+      - volumenDePostgresql:/var/lib/postgresql/data
+    networks:
+      - red_tienda
+
+networks:
+  red_tienda:
+volumes:
+  volumenDePostgresql:
+    driver: local
+  volumenApiCarrito:
+    driver: local
