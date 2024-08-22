@@ -30,3 +30,15 @@ CREATE TABLE IF NOT EXISTS carrito_items (
                                              FOREIGN KEY (carrito_id) REFERENCES carritos(carrito_id),
 FOREIGN KEY (item_id) REFERENCES items(item_carrito_id )
 );
+
+CREATE TABLE IF NOT EXISTS imagenes_factura (
+                                                imagen_id SERIAL PRIMARY KEY,
+                                                url_imagen VARCHAR(255)
+    );
+
+CREATE TABLE IF NOT EXISTS carrito_imagen_factura (
+                                                      carrito_id SERIAL,
+                                                      imagen_id SERIAL,
+                                                      FOREIGN KEY (carrito_id) REFERENCES carritos(carrito_id),
+    FOREIGN KEY (imagen_id) REFERENCES imagenes_factura(imagen_id)
+    );

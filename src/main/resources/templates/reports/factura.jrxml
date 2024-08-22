@@ -1,0 +1,242 @@
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<jasperReport name="invoice" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b8515c3d-537d-4652-910d-8986abf255df">
+    <dataset name="tablaDeProductos" uuid="e6253d89-8ca7-497f-9f37-d9ed1c2a8b88">
+        <query language="sql"><![CDATA[]]></query>
+        <field name="productName" class="java.lang.String"/>
+        <field name="cantidad" class="java.lang.Integer"/>
+        <field name="precioUnitario" class="java.math.BigDecimal"/>
+        <field name="precioTotalUnidad" class="java.math.BigDecimal"/>
+    </dataset>
+    <dataset name="tablaDeDescuento" uuid="8c792233-560e-47a2-b8a7-ada30048922b">
+        <query language="sql"><![CDATA[]]></query>
+        <field name="descuentoPorcentaje" class="java.lang.Float"/>
+        <field name="total" class="java.math.BigDecimal"/>
+    </dataset>
+    <parameter name="numFactura" class="java.lang.String"/>
+    <parameter name="fechaPago" class="java.lang.String"/>
+    <parameter name="nombreCompletoCliente" class="java.lang.String"/>
+    <parameter name="direccionCliente" class="java.lang.String"/>
+    <parameter name="numeroTelefono" class="java.lang.String"/>
+    <parameter name="codigoCupon" class="java.lang.String"/>
+    <parameter name="imageDir" class="java.lang.String"/>
+    <parameter name="tablaProductos" class="net.sf.jasperreports.engine.JRDataSource"/>
+    <parameter name="tablaDescuento1" class="net.sf.jasperreports.engine.JRDataSource"/>
+    <parameter name="tablaDescuento2" class="net.sf.jasperreports.engine.JRDataSource"/>
+
+    <query language="sql"><![CDATA[]]></query>
+    <background splitType="Stretch"/>
+    <title height="255" splitType="Stretch">
+        <element kind="image" uuid="1ba8596c-4e65-4e33-85ca-be3883caea5f" x="0" y="0" width="180" height="100">
+            <expression><![CDATA[$P{imageDir} + "logo.png"]]></expression>
+        </element>
+        <element kind="staticText" uuid="75b049b6-4820-4b44-be41-7f6afdb3c660" mode="Transparent" x="325" y="0" width="230" height="20" fontName="SansSerif" fontSize="14.0" bold="true" hTextAlign="Center">
+            <text><![CDATA[TIENDA DEPORTIVA SPORTFLEX]]></text>
+        </element>
+        <element kind="textField" uuid="a32d04fc-243c-4628-9a5d-6a4de71ffd21" mode="Opaque" x="325" y="20" width="228" height="28" forecolor="#000000" backcolor="#F2F2F2" fontSize="13.0" hTextAlign="Center" vTextAlign="Middle">
+            <expression><![CDATA[$P{numFactura}]]></expression>
+        </element>
+        <element kind="staticText" uuid="c74b9456-f980-4791-a7b1-a246ca684644" x="380" y="60" width="174" height="20" forecolor="#0A0A0A" fontSize="12.0" hTextAlign="Center" vTextAlign="Middle">
+            <text><![CDATA[FACTURA]]></text>
+        </element>
+        <element kind="staticText" uuid="9d084021-ebef-4400-94ec-3f47a1d39ce9" x="380" y="80" width="80" height="20" pdfEncoding="Cp1250" hTextAlign="Right" vTextAlign="Middle">
+            <text><![CDATA[Fecha Compra :]]></text>
+        </element>
+        <element kind="textField" uuid="26f64ab6-ec8d-4d6a-8e55-1ade99acf7a4" x="460" y="80" width="94" height="20" pattern="YYYY.MM.dd" hTextAlign="Left" vTextAlign="Middle">
+            <expression><![CDATA[$P{fechaPago}]]></expression>
+        </element>
+        <element kind="staticText" uuid="d17aaa14-07f6-41eb-8fc8-e3e1b50a4e6e" x="1" y="159" width="158" height="20" fontSize="12.0" bold="true">
+            <text><![CDATA[Informacion del Cliente]]></text>
+        </element>
+        <element kind="rectangle" uuid="a2e491c1-d659-48fe-977e-b4566cb6da81" x="1" y="179" width="379" height="1">
+            <pen lineWidth="0.25" lineStyle="Solid"/>
+        </element>
+        <element kind="textField" uuid="d5e91d97-1587-489a-a064-fc451522b50f" x="1" y="180" width="379" height="25" bold="true" vTextAlign="Middle">
+            <expression><![CDATA[$P{nombreCompletoCliente}]]></expression>
+        </element>
+        <element kind="textField" uuid="56d671cb-a157-4a91-8bdb-ee336dc4767a" x="1" y="205" width="379" height="15" vTextAlign="Middle">
+            <expression><![CDATA[$P{direccionCliente}]]></expression>
+        </element>
+        <element kind="textField" uuid="50ca9d2e-99c7-4728-b75a-f8010889ec24" x="1" y="220" width="379" height="15">
+            <expression><![CDATA[$P{numeroTelefono}]]></expression>
+        </element>
+        <element kind="textField" uuid="03d08dce-6b42-4930-b5ca-f46f02c7dfdd" x="79" y="235" width="301" height="15">
+            <expression><![CDATA[$P{codigoCupon}]]></expression>
+        </element>
+        <element kind="staticText" uuid="0971fa46-425a-442b-8ca9-c58da21b56a7" x="1" y="235" width="78" height="15" pdfEncoding="Cp1250" hTextAlign="Left" vTextAlign="Middle">
+            <text><![CDATA[Codigo Cupon :]]></text>
+        </element>
+        <element kind="textField" uuid="88ff0376-7f6f-4dd1-b1cb-428ba7cb1572" x="420" y="230" width="64" height="20" hTextAlign="Right" vTextAlign="Middle">
+            <expression><![CDATA["Pagina " + $V{PAGE_NUMBER}]]></expression>
+        </element>
+        <element kind="textField" uuid="84903248-73a6-443e-a77c-fd13fd52ef5b" x="484" y="230" width="64" height="20" evaluationTime="Report" hTextAlign="Left" vTextAlign="Middle">
+            <expression><![CDATA[" de " + $V{PAGE_NUMBER}]]></expression>
+        </element>
+    </title>
+    <columnHeader height="30" splitType="Stretch">
+        <element kind="staticText" uuid="f8b0c86a-83a8-4c35-b0fc-ec457e37efee" mode="Opaque" x="0" y="15" width="20" height="15" backcolor="#F2F2F2" fontSize="10.0" pdfEncoding="Cp1250" bold="true" hTextAlign="Left" vTextAlign="Middle">
+            <text><![CDATA[N°]]></text>
+            <box leftPadding="2">
+                <topPen lineWidth="0.5"/>
+                <leftPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+            </box>
+        </element>
+        <element kind="staticText" uuid="d84f9d9e-ffb3-4faa-8309-4fcce43639a0" mode="Opaque" x="20" y="15" width="245" height="15" backcolor="#F2F2F2" fontSize="10.0" pdfEncoding="Cp1250" bold="true" hTextAlign="Left" vTextAlign="Middle">
+            <text><![CDATA[Nombre del Producto]]></text>
+            <box leftPadding="5">
+                <topPen lineWidth="0.5"/>
+                <leftPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+            </box>
+        </element>
+        <element kind="staticText" uuid="337e135c-dcf4-4d0c-9228-2df73f791e27" mode="Opaque" x="265" y="15" width="55" height="15" backcolor="#F2F2F2" fontSize="10.0" pdfEncoding="Cp1250" bold="true" hTextAlign="Center" vTextAlign="Middle">
+            <text><![CDATA[Cantidad]]></text>
+            <box>
+                <topPen lineWidth="0.5"/>
+                <leftPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+            </box>
+        </element>
+        <element kind="staticText" uuid="b1a60577-9512-4479-948f-ed1f72293073" mode="Opaque" x="320" y="15" width="110" height="15" backcolor="#F2F2F2" fontSize="10.0" pdfEncoding="Cp1250" bold="true" hTextAlign="Center" vTextAlign="Middle">
+            <text><![CDATA[Precio Unitario]]></text>
+            <box>
+                <topPen lineWidth="0.5"/>
+                <leftPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+            </box>
+        </element>
+        <element kind="staticText" uuid="f0f0775d-3964-4437-b6c0-5f14f7b57dc9" mode="Opaque" x="430" y="15" width="125" height="15" backcolor="#F2F2F2" fontSize="10.0" pdfEncoding="Cp1250" bold="true" hTextAlign="Center" vTextAlign="Middle">
+            <text><![CDATA[Precio]]></text>
+            <box>
+                <topPen lineWidth="0.5"/>
+                <leftPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+            </box>
+        </element>
+    </columnHeader>
+    <detail>
+        <band height="31" splitType="Stretch">
+            <element kind="component" uuid="90a605f0-d54e-4b6c-8796-c277e023b52c" positionType="Float" mode="Opaque" x="0" y="0" width="555" height="30">
+                <component kind="list" printOrder="Vertical">
+                    <datasetRun uuid="6d9f205e-b0dc-496a-8cce-e041882cede7" subDataset="tablaDeProductos">
+                        <dataSourceExpression><![CDATA[$P{tablaProductos}]]></dataSourceExpression>
+                    </datasetRun>
+                    <contents height="30" width="555">
+                        <element kind="textField" uuid="9245f145-9e0c-4b24-af65-5996f7d49e1f" x="0" y="0" width="20" height="30" fontSize="10.0" hTextAlign="Center" vTextAlign="Middle">
+                            <expression><![CDATA[$V{REPORT_COUNT}]]></expression>
+                            <box>
+                                <topPen lineWidth="0.5"/>
+                                <leftPen lineWidth="0.5"/>
+                                <bottomPen lineWidth="0.5"/>
+                                <rightPen lineWidth="0.5"/>
+                            </box>
+                        </element>
+                        <element kind="textField" uuid="7b89985e-eae8-4c6e-847a-7a76789709da" x="20" y="0" width="245" height="30" fontSize="10.0" vTextAlign="Middle">
+                            <expression><![CDATA[$F{productName}]]></expression>
+                            <box leftPadding="5">
+                                <topPen lineWidth="0.5"/>
+                                <bottomPen lineWidth="0.5"/>
+                                <rightPen lineWidth="0.5"/>
+                            </box>
+                        </element>
+                        <element kind="textField" uuid="3884665a-ce20-43fc-b88a-c37418984d92" x="265" y="0" width="55" height="30" fontSize="10.0" hTextAlign="Center" vTextAlign="Middle">
+                            <expression><![CDATA[$F{cantidad}]]></expression>
+                            <box>
+                                <topPen lineWidth="0.5"/>
+                                <bottomPen lineWidth="0.5"/>
+                                <rightPen lineWidth="0.5"/>
+                            </box>
+                        </element>
+                        <element kind="textField" uuid="6c55d4bc-dc64-4243-9c6f-077c61c459ee" x="320" y="0" width="110" height="30" fontSize="10.0" hTextAlign="Center" vTextAlign="Middle">
+                            <expression><![CDATA[$F{precioUnitario}+" USD"]]></expression>
+                            <box>
+                                <topPen lineWidth="0.5"/>
+                                <bottomPen lineWidth="0.5"/>
+                                <rightPen lineWidth="0.5"/>
+                            </box>
+                        </element>
+                        <element kind="textField" uuid="e28c7956-381a-402f-9b50-d7384e68ab81" x="430" y="0" width="125" height="30" fontSize="10.0" hTextAlign="Center" vTextAlign="Middle">
+                            <expression><![CDATA[$F{precioTotalUnidad}+" USD"]]></expression>
+                            <box>
+                                <topPen lineWidth="0.5"/>
+                                <bottomPen lineWidth="0.5"/>
+                                <rightPen lineWidth="0.5"/>
+                            </box>
+                        </element>
+                    </contents>
+                </component>
+            </element>
+
+        </band>
+    </detail>
+    <lastPageFooter height="65">
+        <element kind="component" uuid="66904547-63ce-4278-8cf0-3a0bef368a86" positionType="Float" x="0" y="10" width="555" height="40">
+            <component kind="list" printOrder="Vertical">
+                <datasetRun uuid="06b2f26f-a0c5-42a2-a758-49f397ac55fa" subDataset="tablaDeDescuento">
+                    <dataSourceExpression><![CDATA[$P{tablaDescuento2}]]></dataSourceExpression>
+                </datasetRun>
+                <contents height="40" width="555">
+                    <element kind="staticText" uuid="6d04b613-10e6-4ed9-865c-abd72f6a5c8f" mode="Transparent" x="0" y="0" width="100" height="15" pdfEncoding="Cp1250" hTextAlign="Right" vTextAlign="Top">
+                        <text><![CDATA[Total a pagar]]></text>
+                    </element>
+                    <element kind="staticText" uuid="657dd3b6-546f-4e14-a6af-7c6b0eb17405" x="0" y="15" width="100" height="15" pdfEncoding="Cp1250" hTextAlign="Right" vTextAlign="Top">
+                        <text><![CDATA[Metodo de pago]]></text>
+                    </element>
+                    <element kind="textField" uuid="f7c2d501-d800-4ef6-82fd-9845a7f63af8" x="110" y="0" width="442" height="15" pattern="#,##0.##;¤-#,##0.##" vTextAlign="Top">
+                        <expression><![CDATA[$F{total}+" USD"]]></expression>
+                    </element>
+                    <element kind="staticText" uuid="a5415110-efc8-4859-8c16-972e93a4e82b" x="110" y="15" width="442" height="15">
+                        <text><![CDATA[Con Tarjeta Via Mercado de Pago]]></text>
+                    </element>
+                </contents>
+            </component>
+        </element>
+        <element kind="rectangle" uuid="026496f9-c536-4e3c-bf49-e9bd204df9a6" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="40" width="553" height="1" forecolor="#0080FF" backcolor="#0080FF">
+            <pen lineWidth="0.5"/>
+        </element>
+        <element kind="textField" uuid="3ccfbfc3-de04-41ad-9722-82fac5f33e9f" x="370" y="50" width="185" height="15" fontSize="10.0" pattern="MMMMM dd, yyyy" hTextAlign="Right" vTextAlign="Middle">
+            <expression><![CDATA["Tiempo de Impresion: " + new java.util.Date()]]></expression>
+        </element>
+        <element kind="staticText" uuid="f4141aaa-8434-48a2-a5f3-4ac860fa2696" x="0" y="40" width="555" height="15">
+            <text><![CDATA[Tienda deportiva SportFlex]]></text>
+        </element>
+    </lastPageFooter>
+    <summary height="30" splitType="Stretch">
+        <element kind="component" uuid="f700c24f-410b-47e0-9572-da6ac6903186" x="430" y="0" width="125" height="30">
+            <component kind="list">
+                <datasetRun uuid="6fa4f773-fe2c-4174-88c3-320bf4e93d8d" subDataset="tablaDeDescuento">
+                    <dataSourceExpression><![CDATA[$P{tablaDescuento1}]]></dataSourceExpression>
+                </datasetRun>
+                <contents height="30" width="125">
+                    <element kind="staticText" uuid="63ff790f-8189-4285-acd3-dd30f6d12cee" mode="Opaque" x="0" y="0" width="70" height="15" hTextAlign="Right" vTextAlign="Middle">
+                        <text><![CDATA[Descuento :]]></text>
+                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
+
+                    </element>
+                    <element kind="textField" uuid="0bf5090b-5d38-461b-846f-6d3f0f29785e" mode="Opaque" x="70" y="0" width="55" height="15" vTextAlign="Middle">
+                        <expression><![CDATA[$F{descuentoPorcentaje}+"%"]]></expression>
+
+                    </element>
+                    <element kind="staticText" uuid="83ce7fe0-e05c-4ad7-b232-47a9b4398dca" mode="Opaque" x="0" y="15" width="70" height="15" vTextAlign="Middle">
+                        <text><![CDATA[Total a Pagar:]]></text>
+                        <property name="com.jaspersoft.studio.unit.height" value="px"/>
+                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
+
+                    </element>
+                    <element kind="textField" uuid="10d046df-4532-4894-b168-3cfd5db296b0" mode="Opaque" x="70" y="15" width="55" height="15">
+                        <expression><![CDATA[$F{total}+" USD"]]></expression>
+                        <property name="com.jaspersoft.studio.unit.height" value="px"/>
+                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
+
+                    </element>
+                </contents>
+            </component>
+            <property name="com.jaspersoft.studio.unit.width" value="px"/>
+        </element>
+    </summary>
+</jasperReport>

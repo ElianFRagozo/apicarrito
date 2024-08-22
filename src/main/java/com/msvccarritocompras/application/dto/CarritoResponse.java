@@ -10,12 +10,18 @@ public record CarritoResponse(
         UsuarioDto usuarioDto,
         Float total,
         String codigoCupon,
-        List<CarritoResponse.ItemCarritoResponse> itemCarritoList
+        List<ItemCarritoResponse> itemCarritoList,
+        List<ImagenFacturas> imagenFacturasList
 ) {
     public record ItemCarritoResponse(
             Long itemCarritoId,
             Integer cantidad,
             Float precioUnitarioItem,
             ProductoDto productoDto
-    ){}
+    ) {}
+
+    public record ImagenFacturas(
+            String urlImagen
+    ) {}
 }
+
