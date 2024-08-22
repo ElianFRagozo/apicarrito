@@ -216,6 +216,14 @@ public class CarritoService implements CarritoRepository {
         return carritoPersistence.findAll(pageable);
     }
 
+    @Override
+    public List<Imagen> getUrlFactura(Long carritoId) {
+        Carrito carrito= carritoPersistence.findById(carritoId)
+                .orElseThrow(()-> new   CarritoNotFoundException("carrito con el id "+carritoId+" no encontrado"));
+
+        return carrito.getImagenList();
+    }
+
     public List<String> generarPDFyCloudinary(List<ItemCarrito> itemCarritoList, Carrito carritoGuardado, UsuarioDto usuarioDto) {
 
         try {

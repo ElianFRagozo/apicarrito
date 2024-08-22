@@ -116,4 +116,28 @@ public class CarritoController {
     ResponseEntity<CarritoResponse> getCarritoById(@PathVariable Long carritoId){
         return ResponseEntity.ok(carritoRepository.getCarrito(carritoId));
     }
+
+    @Operation(
+            summary = "Buscar url factura del carrito por su Id",
+            description = "Buscar las urls de la factura del carrito de compras por su Id",
+            tags = {"Carrito"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Carrito encontrado exitosamente"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Carrito con ese Id no encontrado",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping("/factura/{carritoId}")
+    ResponseEntity<?> getFacturaByCarritoId(@PathVariable Long carritoId){
+        return ResponseEntity.ok(carritoRepository.getUrlFactura(carritoId));
+    }
 }
